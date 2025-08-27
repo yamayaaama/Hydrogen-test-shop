@@ -5,6 +5,9 @@ import {vitePlugin as remix} from '@remix-run/dev';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
+  define: {
+    global: 'globalThis',
+  },
   plugins: [
     hydrogen(),
     oxygen(),
@@ -28,6 +31,8 @@ export default defineConfig({
     include: [
       'clsx',
       '@headlessui/react',
+      '@headlessui/react',
+      'use-sync-external-store',
       'typographic-base',
       'react-intersection-observer',
       'react-use/esm/useScroll',
