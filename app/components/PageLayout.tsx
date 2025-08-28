@@ -1,6 +1,6 @@
 import {useParams, Form, Await, useRouteLoaderData} from '@remix-run/react';
 import useWindowScroll from 'react-use/esm/useWindowScroll';
-import {Disclosure} from '@headlessui/react';
+import {Disclosure, Menu, Transition} from '@headlessui/react';
 import {Suspense, useEffect, useMemo} from 'react';
 import {CartForm} from '@shopify/hydrogen';
 
@@ -28,6 +28,7 @@ import {
 import {useIsHydrated} from '~/hooks/useIsHydrated';
 import {useCartFetchers} from '~/hooks/useCartFetchers';
 import type {RootLoader} from '~/root';
+import { relative } from 'path';
 
 type LayoutProps = {
   children: React.ReactNode;
@@ -275,19 +276,69 @@ function DesktopHeader({
         </Link>
         <nav className="flex gap-8">
           {/* Top level menu items */}
-          {(menu?.items || []).map((item) => (
-            <Link
-              key={item.id}
-              to={item.to}
-              target={item.target}
-              prefetch="intent"
-              className={({isActive}) =>
-                isActive ? 'pb-1 border-b -mb-px' : 'pb-1'
-              }
-            >
-              {item.title}
-            </Link>
-          ))}
+          {(menu?.items || []).map((item) => {
+            if (item.title === 'Collections') {
+              return (
+                <Menu as="div" key={item.id} className="relative">
+                  <Menu.Button className="pb-1 hover:border-b -mb-px">
+                    {item.title}
+                  </Menu.Button>
+                  <Transition
+                    enter="transition duration-100 ease-out"
+                    enterFrom="transform scale-95 opacity-0"
+                    enterTo="transform scale-100 opacity-100"
+                    leave="transition duration-75 ease-out"
+                    leaveFrom="transform scale-100 opacity-100"
+                    leaveTo="transform scale-95 opacity-0"
+                  >
+                    <Menu.Items
+                      className="absolute left-0 mt-2 w-56 bg-white 
+                        text-black shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                    >
+                      <Menu.Item>
+                        {({active}) => (
+                          <Link
+                            to="/collections/mens"
+                            className={`${
+                              active ? 'bg-gray-100' : ''
+                            } block px-4 py-2 text-sm`}
+                          >
+                            メンズ
+                          </Link>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({active}) => (
+                          <Link
+                            to="/collections/womens"
+                            className={`${
+                              active ? 'bg-gray-100' : ''
+                            } block px-4 py-2 text-sm`}
+                          >
+                            レディース
+                          </Link>
+                        )}
+                      </Menu.Item>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+              );
+            }
+
+            return (
+              <Link
+                key={item.id}
+                to={item.to}
+                target={item.target}
+                prefetch="intent"
+                className={({isActive}) =>
+                  isActive ? 'pb-1 border-b -mb-px' : 'pb-1'
+                }
+              >
+                {item.title}
+              </Link>
+            );
+          })}
         </nav>
       </div>
       <div className="flex items-center gap-1">
